@@ -3,6 +3,8 @@ import './style.css';
 import { Formik, useField } from 'formik';
 import styled from 'styled-components';
 import { useRef, useEffect } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Input = styled.input`
   padding: 10px; 
@@ -87,6 +89,30 @@ const Address = ({ name, setFieldValue, ...otherProps }) => {
   );
 };
 
+const MyDatePicker = ({ name, setFieldValue, ...otherProps }) => {
+  const [field, meta, helpers] = useField(name);
+
+  const MyCalendarContainer = ({ children }) => {
+    return (
+      <div style={{ width: '400px' }}>
+        <CalendarContainer> {children}</CalendarContainer>
+      </div>
+    );
+  };
+  return (
+    <>
+      <DatePicker
+        name={name}
+        {...otherProps}
+        onChange={(date) => {
+          setFieldValue(name, date);
+        }}
+        calendarContainer={MyCalendarContainer}
+      />
+    </>
+  );
+};
+
 export default function App() {
   return (
     <div>
@@ -100,6 +126,7 @@ export default function App() {
             state: '',
             zipCode: '',
           },
+          submissionDate: '',
         }}
         onSubmit={(values, actions) => {
           console.log(values);
@@ -109,6 +136,13 @@ export default function App() {
           //console.log(formik);
           return (
             <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+              <div style={{ margin: '10px' }}>
+                <MyDatePicker
+                  name="submissionDate"
+                  setFieldValue={formik.setFieldValue}
+                />
+              </div>
+
               <Div>
                 <Label htmlFor="name">Name:</Label>
                 <Input
@@ -121,6 +155,7 @@ export default function App() {
               </Div>
 
               <Address name="address" setFieldValue={formik.setFieldValue} />
+
               <Input type="submit" value="Submit" />
             </form>
           );
